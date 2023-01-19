@@ -69,10 +69,9 @@ class GemsDepLevel
 
     gems = names.map do |name|
 
-      filename = "#{name}/#{name}.gemspec"
-      gemspec = File.join(dir, filename)
+      gemspec = File.join(dir, "#{name}/#{name}.gemspec")
 
-      if File.exists? gemspec then
+      if File.exist? gemspec then
 
         s = File.read gemspec
         dependencies = s.scan(/add_runtime_dependency\(['"]([^'"]+)/)
@@ -92,6 +91,8 @@ class GemsDepLevel
 
   private
 
+  # the return value is passed back through gemtally
+  #
   def scan(gem, h, gemtally=Hash.new(0), level=0)
 
     if @debug then
@@ -104,12 +105,8 @@ class GemsDepLevel
 
     gemtally[gem] = level if gemtally[gem] <= level
 
-    h[gem].each do |x|
-      scan(x, h, gemtally, level+1)
-    end
+    h[gem].each {|x| scan(x, h, gemtally, level+1) }
 
   end
 
-
 end
-
